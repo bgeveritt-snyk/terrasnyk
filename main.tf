@@ -1,5 +1,5 @@
 provider "aws" {
-  region                      = "us-east-1"
+  region                      = var.region
   skip_credentials_validation = true
   skip_requesting_account_id  = true
   skip_metadata_api_check     = true
@@ -8,7 +8,7 @@ provider "aws" {
 }
 
 resource "aws_vpc" "example" {
-  cidr_block = "255.255.255.0/24"
+  cidr_block = var.cidr
 }
 
 resource "aws_security_group" "allow_ssh" {
@@ -25,7 +25,7 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_security_group" "allow_ssh_with_valid_cidr" {
-  name        = "allow_ssh"
+  name        = "allow_ssh_with_valid_cidr"
   description = "Allow SSH inbound from specific range"
   vpc_id      = aws_vpc.example.id
 
@@ -33,6 +33,6 @@ resource "aws_security_group" "allow_ssh_with_valid_cidr" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["255.255.255.0/24"]
+    cidr_blocks = list(var.cidr)
   }
 }
